@@ -2,17 +2,27 @@
 
 pub type ino_t = u64;
 pub type off_t = i64;
+// GUYC20210602
+#[cfg(target_arch = "sw64")]
+pub type blkcnt_t = u32;
+#[cfg(not(target_arch = "sw64"))]
 pub type blkcnt_t = i64;
 pub type shmatt_t = u64;
 pub type msgqnum_t = u64;
 pub type msglen_t = u64;
+// GUYC20210602
+#[cfg(target_arch = "sw64")]
+pub type fsblkcnt_t = i32;
+#[cfg(not(target_arch = "sw64"))]
 pub type fsblkcnt_t = u64;
+// GUYC20210602
+#[cfg(target_arch = "sw64")]
+pub type fsfilcnt_t = u32;
+#[cfg(not(target_arch = "sw64"))]
 pub type fsfilcnt_t = u64;
 pub type rlim_t = u64;
-#[cfg(all(target_arch = "x86_64", target_pointer_width = "32"))]
-pub type __syscall_ulong_t = ::c_ulonglong;
-#[cfg(not(all(target_arch = "x86_64", target_pointer_width = "32")))]
 pub type __syscall_ulong_t = ::c_ulong;
+
 
 cfg_if! {
     if #[cfg(all(target_arch = "aarch64", target_pointer_width = "32"))] {
@@ -20,11 +30,16 @@ cfg_if! {
         pub type time_t = i32;
         pub type __fsword_t = i32;
     } else {
+        // GUYC20210602
+        #[cfg(target_arch = "sw64")]
+        pub type __fsword_t = i32;
+        #[cfg(not(target_arch = "sw64"))]
         pub type __fsword_t = i64;
         pub type clock_t = i64;
         pub type time_t = i64;
     }
 }
+
 
 s! {
     pub struct sigset_t {
@@ -68,23 +83,6 @@ s! {
     pub struct semid_ds {
         pub sem_perm: ipc_perm,
         pub sem_otime: ::time_t,
-        #[cfg(not(any(
-            target_arch = "aarch64",
-            target_arch = "loongarch64",
-            target_arch = "mips64",
-            target_arch = "powerpc64",
-            target_arch = "riscv64",
-            target_arch = "sparc64")))]
-        __reserved: ::__syscall_ulong_t,
-        pub sem_ctime: ::time_t,
-        #[cfg(not(any(
-            target_arch = "aarch64",
-            target_arch = "loongarch64",
-            target_arch = "mips64",
-            target_arch = "powerpc64",
-            target_arch = "riscv64",
-            target_arch = "sparc64")))]
-        __reserved2: ::__syscall_ulong_t,
         pub sem_nsems: ::__syscall_ulong_t,
         __glibc_reserved3: ::__syscall_ulong_t,
         __glibc_reserved4: ::__syscall_ulong_t,
@@ -95,32 +93,5 @@ pub const __SIZEOF_PTHREAD_RWLOCKATTR_T: usize = 8;
 
 pub const O_LARGEFILE: ::c_int = 0;
 
-cfg_if! {
-    if #[cfg(target_arch = "aarch64")] {
-        mod aarch64;
-        pub use self::aarch64::*;
-    } else if #[cfg(any(target_arch = "powerpc64"))] {
-        mod powerpc64;
-        pub use self::powerpc64::*;
-    } else if #[cfg(any(target_arch = "sparc64"))] {
-        mod sparc64;
-        pub use self::sparc64::*;
-    } else if #[cfg(any(target_arch = "mips64"))] {
-        mod mips64;
-        pub use self::mips64::*;
-    } else if #[cfg(any(target_arch = "s390x"))] {
-        mod s390x;
-        pub use self::s390x::*;
-    } else if #[cfg(any(target_arch = "x86_64"))] {
-        mod x86_64;
-        pub use self::x86_64::*;
-    } else if #[cfg(any(target_arch = "riscv64"))] {
-        mod riscv64;
-        pub use self::riscv64::*;
-    } else if #[cfg(any(target_arch = "loongarch64"))] {
-        mod loongarch64;
-        pub use self::loongarch64::*;
-    } else {
-        // Unknown target_arch
-    }
-}
+mod sw64;
+pub use self::sw64::*;

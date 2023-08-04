@@ -6,7 +6,7 @@ pub type socklen_t = u32;
 pub type mode_t = u32;
 pub type ino64_t = u64;
 pub type off64_t = i64;
-pub type blkcnt64_t = i64;
+pub type blkcnt64_t = u64;
 pub type rlim64_t = u64;
 pub type mqd_t = ::c_int;
 pub type nfds_t = ::c_ulong;
@@ -3215,6 +3215,10 @@ pub const UDP_NO_CHECK6_RX: ::c_int = 102;
 pub const MAP_SHARED_VALIDATE: ::c_int = 0x3;
 
 // include/uapi/asm-generic/mman-common.h
+// GUYC20210602
+#[cfg(target_arch = "sw64")]
+pub const MAP_FIXED_NOREPLACE: ::c_int = 0x200000;
+#[cfg(not(target_arch = "sw64"))]
 pub const MAP_FIXED_NOREPLACE: ::c_int = 0x100000;
 pub const MLOCK_ONFAULT: ::c_uint = 0x01;
 
@@ -3690,6 +3694,10 @@ pub const E2BIG: ::c_int = 7;
 pub const ENOEXEC: ::c_int = 8;
 pub const EBADF: ::c_int = 9;
 pub const ECHILD: ::c_int = 10;
+// GUYC20210602
+#[cfg(target_arch = "sw64")]
+pub const EAGAIN: ::c_int = 35;
+#[cfg(not(target_arch = "sw64"))]
 pub const EAGAIN: ::c_int = 11;
 pub const ENOMEM: ::c_int = 12;
 pub const EACCES: ::c_int = 13;
@@ -4886,18 +4894,9 @@ cfg_if! {
     }
 }
 
-cfg_if! {
-    if #[cfg(target_env = "uclibc")] {
-        mod uclibc;
-        pub use self::uclibc::*;
-    } else if #[cfg(any(target_env = "musl", target_env = "ohos"))] {
-        mod musl;
-        pub use self::musl::*;
-    } else if #[cfg(target_env = "gnu")] {
-        mod gnu;
-        pub use self::gnu::*;
-    }
-}
+
+mod gnu;
+pub use self::gnu::*;
 
 mod arch;
 pub use self::arch::*;

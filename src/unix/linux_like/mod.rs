@@ -1884,20 +1884,6 @@ cfg_if! {
     }
 }
 
-cfg_if! {
-    if #[cfg(target_os = "emscripten")] {
-        mod emscripten;
-        pub use self::emscripten::*;
-    } else if #[cfg(target_os = "linux")] {
-        mod linux;
-        pub use self::linux::*;
-    } else if #[cfg(target_os = "l4re")] {
-        mod linux;
-        pub use self::linux::*;
-    } else if #[cfg(target_os = "android")] {
-        mod android;
-        pub use self::android::*;
-    } else {
-        // Unknown target_os
-    }
-}
+mod linux;
+pub use self::linux::*;
+

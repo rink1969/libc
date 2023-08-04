@@ -89,37 +89,21 @@ pub const SO_ZEROCOPY: ::c_int = 60;
 pub const SO_TXTIME: ::c_int = 61;
 pub const SCM_TXTIME: ::c_int = SO_TXTIME;
 pub const SO_BINDTOIFINDEX: ::c_int = 62;
-cfg_if! {
-    // Some of these platforms in CI already have these constants.
-    // But they may still not have those _OLD ones.
-    if #[cfg(all(any(target_arch = "x86",
-                     target_arch = "x86_64",
-                     target_arch = "aarch64",
-                     target_arch = "loongarch64"),
-                 not(any(target_env = "musl", target_env = "ohos"))))] {
-        pub const SO_TIMESTAMP_NEW: ::c_int = 63;
-        pub const SO_TIMESTAMPNS_NEW: ::c_int = 64;
-        pub const SO_TIMESTAMPING_NEW: ::c_int = 65;
-        pub const SO_RCVTIMEO_NEW: ::c_int = 66;
-        pub const SO_SNDTIMEO_NEW: ::c_int = 67;
-        pub const SO_DETACH_REUSEPORT_BPF: ::c_int = 68;
-    }
-}
+
+pub const SO_TIMESTAMP_NEW: ::c_int = 63;
+pub const SO_TIMESTAMPNS_NEW: ::c_int = 64;
+pub const SO_TIMESTAMPING_NEW: ::c_int = 65;
+pub const SO_RCVTIMEO_NEW: ::c_int = 66;
+pub const SO_SNDTIMEO_NEW: ::c_int = 67;
+pub const SO_DETACH_REUSEPORT_BPF: ::c_int = 68;
+
 // pub const SO_PREFER_BUSY_POLL: ::c_int = 69;
 // pub const SO_BUSY_POLL_BUDGET: ::c_int = 70;
 
-cfg_if! {
-    if #[cfg(any(target_arch = "x86",
-                 target_arch = "x86_64",
-                 target_arch = "arm",
-                 target_arch = "aarch64",
-                 target_arch = "riscv64",
-                 target_arch = "s390x",
-                 target_arch = "loongarch64"))] {
-        pub const FICLONE: ::c_ulong = 0x40049409;
-        pub const FICLONERANGE: ::c_ulong = 0x4020940D;
-    }
-}
+
+pub const FICLONE: ::c_ulong = 0x40049409;
+pub const FICLONERANGE: ::c_ulong = 0x4020940D;
+
 
 // Defined in unix/linux_like/mod.rs
 // pub const SCM_TIMESTAMP: ::c_int = SO_TIMESTAMP;
@@ -239,7 +223,7 @@ cfg_if! {
     if #[cfg(any(target_env = "gnu",
                  target_env = "uclibc"))] {
 
-        pub const RLIMIT_CPU: ::__rlimit_resource_t = 0;
+        pub const _CPU: ::__rlimit_resource_t = 0;
         pub const RLIMIT_FSIZE: ::__rlimit_resource_t = 1;
         pub const RLIMIT_DATA: ::__rlimit_resource_t = 2;
         pub const RLIMIT_STACK: ::__rlimit_resource_t = 3;

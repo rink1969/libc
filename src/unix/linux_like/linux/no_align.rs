@@ -5,24 +5,24 @@ macro_rules! expand_align {
                 #[cfg(any(target_arch = "x86_64",
                           target_arch = "powerpc64",
                           target_arch = "mips64",
+                          target_arch = "sw64", // GUYC20210602
                           target_arch = "s390x",
                           target_arch = "sparc64",
                           target_arch = "riscv64",
                           target_arch = "riscv32",
-                          target_arch = "loongarch64",
                           all(target_arch = "aarch64",
-                              any(target_env = "musl", target_env = "ohos"))))]
+                              target_env = "musl")))]
                 __align: [::c_int; 0],
                 #[cfg(not(any(target_arch = "x86_64",
                               target_arch = "powerpc64",
                               target_arch = "mips64",
+                              target_arch = "sw64", // GUYC20210602
                               target_arch = "s390x",
                               target_arch = "sparc64",
                               target_arch = "riscv64",
                               target_arch = "riscv32",
-                              target_arch = "loongarch64",
                               all(target_arch = "aarch64",
-                                  any(target_env = "musl", target_env = "ohos")))))]
+                                  target_env = "musl"))))]
                 __align: [::c_long; 0],
                 size: [u8; ::__SIZEOF_PTHREAD_MUTEXATTR_T],
             }

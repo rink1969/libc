@@ -110,7 +110,15 @@ s! {
         pub c_oflag: ::tcflag_t,
         pub c_cflag: ::tcflag_t,
         pub c_lflag: ::tcflag_t,
+        // GUYC20210602
+        #[cfg(target_arch = "sw64")]
+        pub c_cc: [::cc_t; 32],
+        #[cfg(not(target_arch = "sw64"))]
         pub c_line: ::cc_t,
+        // GUYC20210602
+        #[cfg(target_arch = "sw64")]
+        pub c_line: ::cc_t,
+        #[cfg(not(target_arch = "sw64"))]
         pub c_cc: [::cc_t; ::NCCS],
         #[cfg(not(any(
             target_arch = "sparc",
@@ -466,26 +474,26 @@ s_no_extra_traits! {
 
         #[cfg(any(target_arch = "aarch64",
                   target_arch = "s390x",
-                  target_arch = "loongarch64",
+                  target_arch = "sw64", // GUYC20210602
                   all(target_pointer_width = "32",
                       not(target_arch = "x86_64"))))]
         pub ut_session: ::c_long,
         #[cfg(any(target_arch = "aarch64",
                   target_arch = "s390x",
-                  target_arch = "loongarch64",
+                  target_arch = "sw64", // GUYC20210602
                   all(target_pointer_width = "32",
                       not(target_arch = "x86_64"))))]
         pub ut_tv: ::timeval,
 
         #[cfg(not(any(target_arch = "aarch64",
                       target_arch = "s390x",
-                      target_arch = "loongarch64",
+                      target_arch = "sw64", // GUYC20210602
                       all(target_pointer_width = "32",
                           not(target_arch = "x86_64")))))]
         pub ut_session: i32,
         #[cfg(not(any(target_arch = "aarch64",
                       target_arch = "s390x",
-                      target_arch = "loongarch64",
+                      target_arch = "sw64", // GUYC20210602
                       all(target_pointer_width = "32",
                           not(target_arch = "x86_64")))))]
         pub ut_tv: __timeval,
@@ -669,6 +677,10 @@ pub const RTLD_DI_PROFILEOUT: ::c_int = 8;
 pub const RTLD_DI_TLS_MODID: ::c_int = 9;
 pub const RTLD_DI_TLS_DATA: ::c_int = 10;
 
+// GUYC20210602
+#[cfg(target_arch = "sw64")]
+pub const SOCK_NONBLOCK: ::c_int = 0x40000000;
+#[cfg(not(target_arch = "sw64"))]
 pub const SOCK_NONBLOCK: ::c_int = O_NONBLOCK;
 pub const PIDFD_NONBLOCK: ::c_uint = O_NONBLOCK as ::c_uint;
 
@@ -679,6 +691,8 @@ pub const SOL_RDS: ::c_int = 276;
 pub const SOL_IUCV: ::c_int = 277;
 pub const SOL_CAIF: ::c_int = 278;
 pub const SOL_NFC: ::c_int = 280;
+// GUYC20210602
+#[cfg(not(target_arch = "sw64"))]
 pub const SOL_XDP: ::c_int = 283;
 
 pub const MSG_TRYHARD: ::c_int = 4;
@@ -736,6 +750,10 @@ pub const BUFSIZ: ::c_uint = 8192;
 pub const TMP_MAX: ::c_uint = 238328;
 pub const FOPEN_MAX: ::c_uint = 16;
 pub const FILENAME_MAX: ::c_uint = 4096;
+// GUYC20210602
+#[cfg(target_arch = "sw64")]
+pub const POSIX_MADV_DONTNEED: ::c_int = 6;
+#[cfg(not(target_arch = "sw64"))]
 pub const POSIX_MADV_DONTNEED: ::c_int = 4;
 pub const _SC_EQUIV_CLASS_MAX: ::c_int = 41;
 pub const _SC_CHARCLASS_NAME_MAX: ::c_int = 45;
@@ -953,23 +971,21 @@ pub const KEYCTL_SUPPORTS_ENCRYPT: u32 = 0x01;
 pub const KEYCTL_SUPPORTS_DECRYPT: u32 = 0x02;
 pub const KEYCTL_SUPPORTS_SIGN: u32 = 0x04;
 pub const KEYCTL_SUPPORTS_VERIFY: u32 = 0x08;
-cfg_if! {
-    if #[cfg(not(any(target_arch="mips", target_arch="mips64")))] {
-        pub const KEYCTL_MOVE: u32 = 30;
-        pub const KEYCTL_CAPABILITIES: u32 = 31;
 
-        pub const KEYCTL_CAPS0_CAPABILITIES: u32 = 0x01;
-        pub const KEYCTL_CAPS0_PERSISTENT_KEYRINGS: u32 = 0x02;
-        pub const KEYCTL_CAPS0_DIFFIE_HELLMAN: u32 = 0x04;
-        pub const KEYCTL_CAPS0_PUBLIC_KEY: u32 = 0x08;
-        pub const KEYCTL_CAPS0_BIG_KEY: u32 = 0x10;
-        pub const KEYCTL_CAPS0_INVALIDATE: u32 = 0x20;
-        pub const KEYCTL_CAPS0_RESTRICT_KEYRING: u32 = 0x40;
-        pub const KEYCTL_CAPS0_MOVE: u32 = 0x80;
-        pub const KEYCTL_CAPS1_NS_KEYRING_NAME: u32 = 0x01;
-        pub const KEYCTL_CAPS1_NS_KEY_TAG: u32 = 0x02;
-    }
-}
+pub const KEYCTL_MOVE: u32 = 30;
+pub const KEYCTL_CAPABILITIES: u32 = 31;
+
+pub const KEYCTL_CAPS0_CAPABILITIES: u32 = 0x01;
+pub const KEYCTL_CAPS0_PERSISTENT_KEYRINGS: u32 = 0x02;
+pub const KEYCTL_CAPS0_DIFFIE_HELLMAN: u32 = 0x04;
+pub const KEYCTL_CAPS0_PUBLIC_KEY: u32 = 0x08;
+pub const KEYCTL_CAPS0_BIG_KEY: u32 = 0x10;
+pub const KEYCTL_CAPS0_INVALIDATE: u32 = 0x20;
+pub const KEYCTL_CAPS0_RESTRICT_KEYRING: u32 = 0x40;
+pub const KEYCTL_CAPS0_MOVE: u32 = 0x80;
+pub const KEYCTL_CAPS1_NS_KEYRING_NAME: u32 = 0x01;
+pub const KEYCTL_CAPS1_NS_KEY_TAG: u32 = 0x02;
+
 
 pub const M_MXFAST: ::c_int = 1;
 pub const M_NLBLKS: ::c_int = 2;
@@ -1076,6 +1092,7 @@ pub const TIME_ERROR: ::c_int = 5;
 pub const TIME_BAD: ::c_int = TIME_ERROR;
 pub const MAXTC: ::c_long = 6;
 
+
 cfg_if! {
     if #[cfg(any(
         target_arch = "arm",
@@ -1091,10 +1108,13 @@ cfg_if! {
                target_arch = "sparc64"
            ))] {
         pub const PTHREAD_STACK_MIN: ::size_t = 0x6000;
+    } else if #[cfg(target_arch = "sw64")] { // GUYC20210602
+        pub const PTHREAD_STACK_MIN: ::size_t = 0x6000;
     } else {
         pub const PTHREAD_STACK_MIN: ::size_t = 131072;
     }
 }
+
 pub const PTHREAD_MUTEX_ADAPTIVE_NP: ::c_int = 3;
 
 pub const REG_STARTEND: ::c_int = 4;
@@ -1374,10 +1394,10 @@ extern "C" {
     ) -> *mut ::mntent;
 }
 
+
 cfg_if! {
     if #[cfg(any(target_arch = "x86",
                  target_arch = "arm",
-                 target_arch = "m68k",
                  target_arch = "mips",
                  target_arch = "powerpc",
                  target_arch = "sparc",
@@ -1388,16 +1408,17 @@ cfg_if! {
                         target_arch = "aarch64",
                         target_arch = "powerpc64",
                         target_arch = "mips64",
+                        target_arch = "sw64", // GUYC20210602
                         target_arch = "s390x",
                         target_arch = "sparc64",
-                        target_arch = "riscv64",
-                        target_arch = "loongarch64"))] {
+                        target_arch = "riscv64"))] {
         mod b64;
         pub use self::b64::*;
     } else {
         // Unknown target_arch
     }
 }
+
 
 cfg_if! {
     if #[cfg(libc_align)] {

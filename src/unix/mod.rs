@@ -1555,49 +1555,10 @@ cfg_if! {
    }
 }
 
-cfg_if! {
-    if #[cfg(target_env = "newlib")] {
-        mod newlib;
-        pub use self::newlib::*;
-    } else if #[cfg(any(target_os = "linux",
-                        target_os = "l4re",
-                        target_os = "android",
-                        target_os = "emscripten"))] {
-        mod linux_like;
-        pub use self::linux_like::*;
-    } else if #[cfg(any(target_os = "macos",
-                        target_os = "ios",
-                        target_os = "tvos",
-                        target_os = "watchos",
-                        target_os = "freebsd",
-                        target_os = "dragonfly",
-                        target_os = "openbsd",
-                        target_os = "netbsd"))] {
-        mod bsd;
-        pub use self::bsd::*;
-    } else if #[cfg(any(target_os = "solaris",
-                        target_os = "illumos"))] {
-        mod solarish;
-        pub use self::solarish::*;
-    } else if #[cfg(target_os = "haiku")] {
-        mod haiku;
-        pub use self::haiku::*;
-    } else if #[cfg(target_os = "hermit")] {
-        mod hermit;
-        pub use self::hermit::*;
-    } else if #[cfg(target_os = "redox")] {
-        mod redox;
-        pub use self::redox::*;
-    } else if #[cfg(target_os = "nto")] {
-        mod nto;
-        pub use self::nto::*;
-    } else if #[cfg(target_os = "aix")] {
-        mod aix;
-        pub use self::aix::*;
-    } else {
-        // Unknown target_os
-    }
-}
+
+mod linux_like;
+pub use self::linux_like::*;
+
 
 cfg_if! {
     if #[cfg(libc_core_cvoid)] {
